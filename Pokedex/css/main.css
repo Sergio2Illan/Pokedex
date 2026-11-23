@@ -54,9 +54,15 @@ body{
     margin: 0 auto;
 }
 
+.center{
+    text-align: center;
+    width: 100%;
+}
+
 header{
     padding-block: 1rem;
-    box-shadow: 0 0 2rem -1rem rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 2rem .3rem rgb(235, 18, 18);
+    background-color: var(--clr-black);
 }
 
 .nav{
@@ -81,13 +87,13 @@ header{
     cursor: pointer;
     font-weight: 600;
     text-transform: uppercase;
-    box-shadow:  0 0 1rem rgba(0, 0, 0, 0.25);
+    box-shadow: 0 0 0.5rem rgba(255, 255, 255, 0.25);
     transition:  all .2s ease-in-out;
 }
 
 .btn-header:hover{
     transform: scale(1.1);
-    box-shadow:  0 0 2rem rgba(0, 0, 0, 0.25);
+    box-shadow: 0 0 0.75rem rgba(255, 255, 255, 0.35);
 }
 
 main{
@@ -100,6 +106,12 @@ main{
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     /* grid-template-columns: repeat(2, 1fr); */
     gap: 1rem;
+}
+
+.pokemon-all.pokemon-not-found{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .pokemon{
