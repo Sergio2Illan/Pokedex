@@ -25,7 +25,7 @@
     --type-fairy: #F0B6BC;
 }
 
-* {
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -208,6 +208,80 @@ main{
 }
 
 
+/* Load more */
+.contenedor-mas{
+    margin-top: 2rem;
+}
+
+.btn-mas{
+    cursor: pointer;
+}
+
+.pokeball{
+    display: block;
+    position: relative;
+    margin: 0 auto;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 50%;
+    border: 4px solid var(--clr-black);
+    background: linear-gradient(to bottom, #ee1515 50%, var(--clr-white) 50%);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
+    transition: transform .3s ease-in-out;
+}
+
+.pokeball::before,
+.pokeball::after{
+    content: "";
+    position: absolute;
+    box-sizing: border-box;
+}
+
+.pokeball::before{
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: var(--clr-black);
+    transform: translateY(-50%);
+}
+
+.pokeball::after{
+    top: 50%;
+    left: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background-color: var(--clr-white);
+    border: 4px solid var(--clr-black);
+    transform: translate(-50%, -50%);
+}
+
+.btn-mas-texto{
+    display: block;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.btn-mas:not(:disabled):hover .pokeball{
+    transform: rotate(-20deg) scale(1.1);
+}
+
+.btn-mas:disabled{
+    cursor: progress;
+}
+
+.btn-mas:disabled .pokeball{
+    animation: girar 1s linear infinite;
+}
+
+@keyframes girar{
+    to{
+        transform: rotate(360deg);
+    }
+}
 
 /* Type Buttons */
 .normal {

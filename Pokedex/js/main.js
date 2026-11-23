@@ -2,7 +2,7 @@ const listaPokemon = document.querySelector('#pokemonList')
 const buttons = document.querySelectorAll('.btn')
 
 const URL_API = 'https://pokeapi.co/api/v2/pokemon/'
-const TOTAL_POKEMON = 151
+const TOTAL_POKEMON = 251
 
 let cargaActual = 0
 
