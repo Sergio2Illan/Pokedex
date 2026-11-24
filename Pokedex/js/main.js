@@ -1,61 +1,98 @@
 const listaPokemon = document.querySelector('#pokemonList')
 const buttons = document.querySelectorAll('.btn')
+const btnMas = document.querySelector('#cargar-mas')
 
-const URL_API = 'https://pokeapi.co/api/v2/pokemon/'
-const TOTAL_POKEMON = 251
+const URL_API = 'https://pokeapi.co/api/v2/'
+const TOTAL_POKEMON = 1025
+const POR_PAGINA = 20
 
+let idsActuales = []
+let posicion = 0
 let cargaActual = 0
 
 buttons.forEach((btn) =>{
     btn.addEventListener('click', (e)=>{
-        console.log(e.currentTarget.id)
         loadPokemon(e.currentTarget.id)
     })
 })
 
+btnMas.addEventListener('click', cargarMas)
 
+async function obtenerIds(filtro){
+    if(filtro === 'ver-todos'){
+        const ids = []
+        for(let i = 1; i <= TOTAL_POKEMON; i++){
+            ids.push(i)
+        }
+        return ids
+    }
 
+    const response = await fetch(URL_API + 'type/' + filtro)
+    if(!response.ok){
+        throw new Error('Error al recoger el tipo')
+    }
+    const data = await response.json()
+
+    return data.pokemon
+        .map(p => Number(p.pokemon.url.split('/').at(-2)))
+        .filter(id => id <= TOTAL_POKEMON)
+        .sort((a, b) => a - b)
+}
 
 async function loadPokemon(filtro = 'ver-todos'){
+    cargaActual++
+    const carga = cargaActual
+
     try{
-        cargaActual++
-        const carga = cargaActual
         listaPokemon.classList.remove('pokemon-not-found')
-
         listaPokemon.innerHTML = ""
-        let pokemonFound = 0
+        btnMas.hidden = true
+        btnMas.disabled = false
 
-        for(let i = 1; i <= TOTAL_POKEMON; i++){
-            const response = await fetch(URL_API + i)
-            
+        const ids = await obtenerIds(filtro)
+        if(carga !== cargaActual) return
+
+        idsActuales = ids
+        posicion = 0
+
+        if(idsActuales.length === 0){
+            listaPokemon.classList.add('pokemon-not-found')
+            listaPokemon.innerHTML = "<p class='center'>No se han encontrado Pokémon en la Pokédex</p>"
+            return
+        }
+
+        await cargarMas()
+    }catch(err){
+        console.error("No se pudieron cargar los Pokémon:", err)
+    }
+}
+
+async function cargarMas(){
+    const carga = cargaActual
+    const siguientes = idsActuales.slice(posicion, posicion + POR_PAGINA)
+    posicion += POR_PAGINA
+    btnMas.disabled = true
+
+    try{
+        for(const id of siguientes){
+            const response = await fetch(URL_API + 'pokemon/' + id)
             if(!response.ok){
                 throw new Error('Error al recoger los pokemones')
             }
-            
             const data = await response.json()
 
             if(carga !== cargaActual) return
 
-            const coincide = filtro === 'ver-todos' || data.types.some(type => {
-                return type.type.name === filtro
-            })
-
-            if(coincide){
-                showPokemon(data)
-                pokemonFound++
-            }
+            showPokemon(data)
         }
-
-        if(pokemonFound === 0){
-            listaPokemon.classList.add('pokemon-not-found')
-            listaPokemon.innerHTML = "<p class='center'>No se han encontrado Pokémon en la Pokédex</p>"
-        }
-
     }catch(err){
-        console.error("No se pudieron cargar los Pokémon:", err);
+        console.error("No se pudieron cargar los Pokémon:", err)
     }
-    
+
+    btnMas.disabled = false
+    btnMas.hidden = posicion >= idsActuales.length
 }
+
 
 function showPokemon(poke){
 
@@ -85,15 +122,13 @@ function showPokemon(poke){
             </div>
             <div class="pokemon-stats">
                 <p class="stat">
-                    ${poke.weight}KG
+                    ${poke.weight / 10}KG
                 </p>
                 <p class="stat">
-                    ${poke.height}M
+                    ${poke.height / 10}M
                 </p>
             </div>
         </div>
-
-    
     `
 
     listaPokemon.append(div)
